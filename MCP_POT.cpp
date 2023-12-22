@@ -169,10 +169,11 @@ bool MCP_POT::usesHWSPI()
 //
 void MCP_POT::updateDevice(uint8_t pm, uint8_t value, uint8_t cmd)
 {
-  uint8_t command = cmd
+  uint8_t command = cmd;
   if (pm == 0) command |= 1;   //  01
   if (pm == 1) command |= 2;   //  10
   if (pm == 2) command |= 3;   //  11 => both potentiometers
+  //  otherwise ignore
   digitalWrite(_select, LOW);
   if (_hwSPI)
   {

@@ -7,7 +7,7 @@ MCP_POT_demo.ino
 HARDWARE SPI
 ================
 test_timing
-1000 x setValue():	7672
+1000 x setValue():	7548
 1000 x getValue():	760
 
 Done...
@@ -16,8 +16,9 @@ Done...
 SOFTWARE SPI
 ================
 test_timing
-1000 x setValue():	106576
-1000 x getValue():	760
+1000 x setValue():	106448
+1000 x getValue():	752
+
 
 Done...
 

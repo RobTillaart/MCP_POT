@@ -11,10 +11,10 @@ uint32_t start, stop;
 
 
 //  select, reset, shutdown, data, clock == SOFTWARE SPI
-// MCP_POT pot(10, 11, 12, 8, 9);
+MCP_POT pot(10, 11, 12, 8, 9);
 
 //  select, reset, shutdown, &SPI === HW SPI UNO clock = 13, data = 11
-MCP_POT pot(5, 6, 7, &SPI);
+// MCP_POT pot(5, 6, 7, &SPI);
 
 
 void setup()
@@ -70,10 +70,6 @@ void test_sinus()
     int8_t value = 127 * sin(i * TWO_PI / 100);
     pot.setValue(0, 128 + value);
     pot.setValue(1, 128 + value / 2);
-    pot.setValue(2, 64  + value / 2);
-    pot.setValue(3, 192 + value / 2);
-    pot.setValue(4, 224 + value / 4);
-    pot.setValue(5, 128 - value);
     i++;
   }
 }

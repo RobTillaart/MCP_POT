@@ -35,6 +35,7 @@ The library supports both hardware SPI and software SPI.
 
 Current version allows manual override of the hardware SPI clock. 
 
+Alt-234 = Ω
 
 
 #### Related
@@ -71,8 +72,8 @@ The derived classes have same constructors with same parameters as the base clas
 - **MCP42100(...)** constructor 2 potentiometer, 100 KΩ
 - **void begin(uint8_t value = MCP_POT_MIDDLE_VALUE)**
 - **void reset(uint8_t value = MCP_POT_MIDDLE_VALUE)**
-- **bool setValue(uint8_t value = MCP_POT_MIDDLE_VALUE)** set both potmeters.
-- **bool setValue(uint8_t pm, uint8_t value = MCP_POT_MIDDLE_VALUE)**
+- **bool setValue(uint8_t value)** set both potmeters.
+- **bool setValue(uint8_t pm, uint8_t value)**
 - **uint8_t getValue(uint8_t pm = 0)**
 
 

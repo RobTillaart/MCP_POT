@@ -44,9 +44,9 @@ public:
   void     reset(uint8_t value = MCP_POT_MIDDLE_VALUE);
 
   //       set both potmeters
-  bool     setValue(uint8_t value = MCP_POT_MIDDLE_VALUE);
+  bool     setValue(uint8_t value);
   //       set single potmeter (0 or 1
-  bool     setValue(uint8_t pm, uint8_t value = MCP_POT_MIDDLE_VALUE);
+  bool     setValue(uint8_t pm, uint8_t value);
   uint8_t  getValue(uint8_t pm = 0);
 
   //       speed in Hz
