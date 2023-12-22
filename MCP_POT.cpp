@@ -77,10 +77,7 @@ void MCP_POT::reset(uint8_t value)
 {
   digitalWrite(_reset, LOW);
   digitalWrite(_reset, HIGH);
-  for (uint8_t pm = 0; pm < _pmCount; pm++)
-  {
-    setValue(pm, value);
-  }
+  setValue(value);  //  set all to same value.
 }
 
 
@@ -89,6 +86,15 @@ void MCP_POT::reset(uint8_t value)
 //
 //  SET VALUE
 //
+bool MCP_POT::setValue(uint8_t value)
+{
+  _value[0] = value;
+  _value[1] = value;
+  updateDevice(2, value, MCP_POT_WRITE_CMD);
+  return true;
+}
+
+
 bool MCP_POT::setValue(uint8_t pm, uint8_t value)
 {
   if (pm >= _pmCount) return false;
@@ -163,7 +169,10 @@ bool MCP_POT::usesHWSPI()
 //
 void MCP_POT::updateDevice(uint8_t pm, uint8_t value, uint8_t cmd)
 {
-  uint8_t command = cmd | (1 << pm);     //  01 or 10 
+  uint8_t command = cmd
+  if (pm == 0) command |= 1;   //  01
+  if (pm == 1) command |= 2;   //  10
+  if (pm == 2) command |= 3;   //  11 => both potentiometers
   digitalWrite(_select, LOW);
   if (_hwSPI)
   {
