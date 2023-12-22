@@ -53,7 +53,7 @@ unittest(test_constructor)
 
   MCP.begin(2);
 
-  assertEqual(2, MCP.channels());
+  assertEqual(2, MCP.pmCount());
 }
 
 
