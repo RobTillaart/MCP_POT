@@ -1,0 +1,23 @@
+
+IDE:    1.8.19
+board:  UNO
+
+MCP_POT_demo.ino
+
+HARDWARE SPI
+================
+test_timing
+1000 x setValue():	7672
+1000 x getValue():	760
+
+Done...
+
+
+SOFTWARE SPI
+================
+test_timing
+1000 x setValue():	106576
+1000 x getValue():	760
+
+Done...
+
