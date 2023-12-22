@@ -50,7 +50,7 @@ unittest_teardown()
 unittest(test_constructor)
 {
   MCP_POT MCP(9, 10, 11, 6, 7);  //  SW SPI
-  MCP_POT MCP(9, 10, 11, &SPI);  //  SW SPI
+  MCP_POT MCP(9, 10, 11, &SPI);  //  HW SPI
 
   MCP.begin(2);
 
