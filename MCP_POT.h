@@ -2,7 +2,7 @@
 //
 //    FILE: MCP_POT.h
 //  AUTHOR: Rob Tillaart
-// VERSION: 0.2.0
+// VERSION: 0.2.1
 //    DATE: 2023-12-21
 // PURPOSE: Arduino library for MCP41xxx and MCP42xxx SPI based digital potentiometers.
 //     URL: https://github.com/RobTillaart/MCP_POT
@@ -12,7 +12,7 @@
 #include "SPI.h"
 
 
-#define MCP_POT_LIB_VERSION           (F("0.2.0"))
+#define MCP_POT_LIB_VERSION           (F("0.2.1"))
 
 #ifndef MCP_POT_MIDDLE_VALUE
 #define MCP_POT_MIDDLE_VALUE          128
@@ -43,11 +43,19 @@ public:
   void     begin(uint8_t value = MCP_POT_MIDDLE_VALUE);
   void     reset(uint8_t value = MCP_POT_MIDDLE_VALUE);
 
-  //       set both potmeters
+  //       set both potmeters to the same value
   bool     setValue(uint8_t value);
-  //       set single potmeter (0 or 1
+  //       set single potmeter, pm = 0 or 1
   bool     setValue(uint8_t pm, uint8_t value);
   uint8_t  getValue(uint8_t pm = 0);
+
+  //  EXPERIMENTAL
+  //  Ohm wrappers
+  void     setMaxOhm(uint32_t maxOhm);
+  uint32_t getMaxOhm();
+  void     setOhm(uint8_t pm, uint32_t ohm);
+  uint32_t getOhm(uint8_t pm);
+
 
   //       speed in Hz
   void     setSPIspeed(uint32_t speed);
@@ -74,6 +82,7 @@ protected:
 
   uint8_t  _value[2];
   uint8_t  _pmCount;
+  uint32_t _maxOhm;
 
   void     updateDevice(uint8_t pm, uint8_t value, uint8_t cmd);
   void     swSPI_transfer(uint8_t value);
