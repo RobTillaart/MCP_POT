@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - **MCP_POT_serial.ino** control device ove Serial
   - **MCP_POT_triangle.ino** test sketch
 - add **setSWSPIdelay()** to reduce SW SPI maximum speed.
+- reduced default HW SPI speed to 1 MHz.
 - add experimental Ohm wrappers (need testing)
 - update readme.md
 - update keywords.txt
