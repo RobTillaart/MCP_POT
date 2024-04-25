@@ -60,6 +60,8 @@ public:
   //       speed in Hz
   void     setSPIspeed(uint32_t speed);
   uint32_t getSPIspeed();
+  void     setSWSPIdelay(uint16_t del = 0);
+  uint16_t getSWSPIdelay();
 
   //       MISC
   uint8_t  pmCount();
@@ -77,8 +79,6 @@ protected:
   uint8_t  _select;
   uint8_t  _reset;
   uint8_t  _shutdown;
-  bool     _hwSPI;
-  uint32_t _SPIspeed;
 
   uint8_t  _value[2];
   uint8_t  _pmCount;
@@ -87,8 +87,11 @@ protected:
   void     updateDevice(uint8_t pm, uint8_t value, uint8_t cmd);
   void     swSPI_transfer(uint8_t value);
 
+  bool     _hwSPI;
+  uint16_t _swSPIdelay = 0;
+  uint32_t _SPIspeed;
   __SPI_CLASS__ * _mySPI;
-  SPISettings   _spi_settings;
+  SPISettings     _spi_settings;
 };
 
 

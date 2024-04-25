@@ -132,7 +132,7 @@ void MCP_POT::setOhm(uint8_t pm, uint32_t ohm)
 
 uint32_t MCP_POT::getOhm(uint8_t pm)
 {
-  return round(getValue(pm) * (_maxOhm / 255.0))
+  return round(getValue(pm) * (_maxOhm / 255.0));
 }
 
 
@@ -181,6 +181,18 @@ uint32_t MCP_POT::getSPIspeed()
 }
 
 
+void MCP_POT::setSWSPIdelay(uint16_t del)
+{
+  _swSPIdelay = del;
+}
+
+
+uint16_t MCP_POT::getSWSPIdelay()
+{
+  return _swSPIdelay;
+}
+
+
 bool MCP_POT::usesHWSPI()
 {
   return _hwSPI;
@@ -218,6 +230,11 @@ void MCP_POT::updateDevice(uint8_t pm, uint8_t value, uint8_t cmd)
 //  MSBFIRST
 void  MCP_POT::swSPI_transfer(uint8_t val)
 {
+  //  split _swSPIdelay in equal dLow and dHigh
+  //  dLow should be longer one when _swSPIdelay = odd.
+  uint16_t dHigh = _swSPIdelay / 2;
+  uint16_t dLow  = _swSPIdelay - dHigh;
+
   uint8_t clk = _clock;
   uint8_t dao = _dataOut;
   //  MSBFIRST
@@ -225,7 +242,9 @@ void  MCP_POT::swSPI_transfer(uint8_t val)
   {
     digitalWrite(dao,(val & mask));
     digitalWrite(clk, HIGH);
+    if (dHigh > 0) delayMicroseconds(dHigh);
     digitalWrite(clk, LOW);
+    if (dLow > 0) delayMicroseconds(dLow);
   }
 }
 

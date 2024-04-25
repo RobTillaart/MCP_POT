@@ -7,11 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
 ## [0.2.1] - 2024-04-25
-- add **MCP_POT_performance.ino** measure setValue() at various SPI speeds
-- add **MCP_POT_serial.ino** control device ove Serial
-- add **MCP_POT_triangle.ino** test sketch
+- add examples
+  - **MCP_POT_performance.ino** measure setValue() at various SPI speeds
+  - **MCP_POT_serial.ino** control device ove Serial
+  - **MCP_POT_triangle.ino** test sketch
+- add **setSWSPIdelay()** to reduce SW SPI maximum speed.
 - add experimental Ohm wrappers (need testing)
 - update readme.md
+- update keywords.txt
 
 
 ## [0.2.0] - 2024-01-19

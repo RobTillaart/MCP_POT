@@ -118,8 +118,10 @@ There are however some considerations to be aware of.
 
 The default SPI speed used is 8 MHz. Note this only works for HW SPI.
 
-- **void setSPIspeed(uint32_t speed)** sets SPI clock in **Hz**.
-- **uint32_t getSPIspeed()** gets current speed in **Hz**.
+- **void setSPIspeed(uint32_t speed)** sets HW SPI clock in **Hz**.
+- **uint32_t getSPIspeed()** gets current HW SPI speed in **Hz**.
+- **void setSWSPIdelay(uint16_t del = 0)** adjust SW SPI clock.
+- **uint16_t getSWSPIdelay()** get set value.
 
 
 #### Miscellaneous
