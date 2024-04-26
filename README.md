@@ -21,9 +21,8 @@ Arduino library for MCP41xxx and MCP42xxx SPI based digital potentiometers.
 The MCP_POT library implements access to MCP digital potentiometers.
 These devices have 1 or 2 potentiometers, 10 KΩ, 50 KΩ and 100 KΩ and communicates over SPI.
 The library supports both hardware SPI and software SPI.
-Since 0.2.1 the SPI speed can be adjusted for both HW and SW SPI.
 
-The library does not support daisy chaining of devices.
+The library does not support daisy chaining of devices, although this is a neat feature.
 This might be implemented in the future.
 
 
@@ -164,16 +163,33 @@ Note that the use of speeds beyond datasheet specification is at your own risk.
 
 ## Daisy Chaining
 
-Not supported yet.
+**Not supported yet**
 
 The MCP42xxx series have a **SO = Serial Out** pin which allows to daisy chain the devices.
 
-The devices must share the CS (select) signal, or at least all of them should have 
-been selected to forward the bytes that are sent into the chain.
-When the CS signal goes HIGH, all devices will simultaneously change to the new values.
+```
+   Processor                MCP42xxx             MCP42xxx             MCP42xxx
++-------------+          +------------+       +------------+       +------------+
+|             |          |            |       |            |       |            |
+|  SPI DATA   |----------| SI      SO |-------| SI      SO |-------| SI      SO |
+|  SPI CLOCK  | ->     ->| CLOCK      |     ->| CLOCK      |     ->| CLOCK      |
+|  SPI CS     | ->     ->| CS         |     ->| CS         |     ->| CS         |
+|             |          |            |       |            |       |            |
++-------------+          +------------+       +------------+       +------------+
+                            device 1             device 2             device 3
+```
+
+The devices must share the **CS** (select) and **CLOCK signal**, as all devices must be
+selected to forward the bytes that are sent into the chain.
+When the **CS** signal goes HIGH, all devices will simultaneously change to the new values.
+
+Note that the data for the last device in the chain (3) must be send first.
 
 Note however that per device at most one potmeter can be set in a daisy chain, 
 or both at the same value. (as far as I understand the datasheet on this point).
+
+Note that changing one device in a daisy chain implies that other devices need to be updated
+(with their 
 
 
 ## Future
@@ -186,17 +202,16 @@ or both at the same value. (as far as I understand the datasheet on this point).
 #### Should
 
 - investigate and implement daisy chaining of MCP42xxx
-- free format wrapper (user can define units is more flex)
-  - **setMaxUnit(float mu)**, **setUnit(float unit)**, **getUnit()** etc.
-  - still rounding of course, but the user does not need to map any more
-  - can be used for Ohm too.
 
 #### Could
 
-- improve SWSPI for AVR 
-  (code is under test for MCP23S17)
+- improve SWSPI for AVR (code is under test for MCP23S17)
 - percentage interface (another wrapper).
-
+- free format wrapper - user can define units is more flex
+  - **setMaxUnit(float mu)**, **setUnit(float unit)**, **getUnit()** etc.
+  - still rounding, but the user does not need to map the value any more
+  - can be used for Ohm too.
+- unit tests?
 
 #### Wont
 
