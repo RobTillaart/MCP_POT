@@ -32,20 +32,37 @@ This might be implemented in the future.
 |  MCP41050  |   50   |    19.6  |        1         |     N    |
 |  MCP41100  |  100   |   392.2  |        1         |     N    |
 |  MCP42010  |   10   |    39.2  |        2         |     Y    |  daisy chain allowed
-|  MCP42050  |   50   |    19.6  |        2         |     N    |
-|  MCP42100  |  100   |   392.2  |        2         |     N    |
-
-
-Current version allows manual override of the hardware SPI clock. 
+|  MCP42050  |   50   |    19.6  |        2         |     N    |  daisy chain allowed
+|  MCP42100  |  100   |   392.2  |        2         |     N    |  daisy chain allowed
 
 Alt-234 = Ω
+
+The library allows manual override of the HW and SW SPI clock speed (different ways).
+
+
+#### Rheostat mode
+
+To use the device in rheostat mode, one should connect one of the ends to the wiper.
+
+
+#### Voltage divider
+
+The devices can be used as an adjustable voltage divider.
+
+|  Input V  |  Step mV  |  Notes  |
+|:---------:|:---------:|:--------|
+|   12.0    |   47.06   |
+|    5.0    |   19.61   |
+|    3.3    |   12.94   |
+|    2.7    |   10.59   |
 
 
 #### 0.2.0 Breaking change
 
 Version 0.2.0 introduced a breaking change to improve handling the SPI dependency.
+
 The user has to call **SPI.begin()** or equivalent before calling **POT.begin()**.
-Optionally the user can provide parameters to the **SPI.begin(...)**
+Optional the user can provide parameters to the **SPI.begin(...)** call.
 
 
 #### Related
@@ -90,8 +107,11 @@ The derived classes have same constructors with same parameters as the base clas
 
 #### Core
 
-- **bool setValue(uint8_t value)** set both potmeters.
-- **bool setValue(uint8_t pm, uint8_t value)**
+- **bool setValue(uint8_t value)** set all potmeters to the same value.
+For MCP41xxx this means just single potmeter, for MCP42xxx both.
+(datasheet figure 5.2).
+- **bool setValue(uint8_t pm, uint8_t value)** set selected potmeter to value.
+Note that the MCP41xxx only accepts pm == 0.
 - **uint8_t getValue(uint8_t pm = 0)**
 
 
@@ -116,7 +136,15 @@ of **setOhm()** or **setValue()** exactly.
 This interface might change into a UNIT based function, in which the unit is not Ohm.
 It might be any user defined unit e.g. be flow control, lumen or volume.
 
-(feedback is, as always, welcome)
+
+**Resistor calculation, implement in Ohm interface?**
+
+Please be aware of the resistance of the wiper (~50Ω).
+
+```cpp
+Rwa = Rab * (256 - value) / 256 + Rw;
+Rwb = Rab * (256 - value) / 256 + Rw;
+```
 
 
 #### SPI
@@ -161,9 +189,9 @@ HW SPI speeds. In a test it showed the MCP42010 still worked at 8 MHz on an UNO.
 Note that the use of speeds beyond datasheet specification is at your own risk.
 
 
-## Daisy Chaining
+## Daisy Chaining (future notes).
 
-**Not supported yet**
+**Not implemented yet**
 
 The MCP42xxx series have a **SO = Serial Out** pin which allows to daisy chain the devices.
 
@@ -188,8 +216,8 @@ Note that the data for the last device in the chain (3) must be send first.
 Note however that per device at most one potmeter can be set in a daisy chain, 
 or both at the same value. (as far as I understand the datasheet on this point).
 
-Note that changing one device in a daisy chain implies that other devices need to be updated
-(with their 
+Note that changing one device in a daisy chain implies that other devices need to be 
+updated too. However the device allows a **NONE** command, see figure 5.2.
 
 
 ## Future
@@ -202,6 +230,8 @@ Note that changing one device in a daisy chain implies that other devices need t
 #### Should
 
 - investigate and implement daisy chaining of MCP42xxx
+- investigate and implement proper Ohm interface, including R wiper.
+
 
 #### Could
 
@@ -212,6 +242,9 @@ Note that changing one device in a daisy chain implies that other devices need t
   - still rounding, but the user does not need to map the value any more
   - can be used for Ohm too.
 - unit tests?
+- support the NONE command? (fig 5.2).
+- investigate software shutdown (fig 5.2).
+
 
 #### Wont
 
