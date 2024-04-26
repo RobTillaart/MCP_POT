@@ -18,15 +18,16 @@ Arduino library for MCP41xxx and MCP42xxx SPI based digital potentiometers.
 
 **Experimental** to be tested on hardware.
 
-The MCP_POT library implements digital potentiometers.
-The chips have 1 or 2 potentiometers, 10 KΩ, 50 KΩ and 100 KΩ and communicates over SPI.
+The MCP_POT library implements access to MCP digital potentiometers.
+These devices have 1 or 2 potentiometers, 10 KΩ, 50 KΩ and 100 KΩ and communicates over SPI.
 The library supports both hardware SPI and software SPI.
+Since 0.2.1 the SPI speed can be adjusted for both HW and SW SPI.
 
 The library does not support daisy chaining of devices.
 This might be implemented in the future.
 
 
-|  Type      |   KΩ   |  step Ω  |  Potentiometers  |  Tested  |  Notes  |
+|  Type      |   KΩ   |  Step Ω  |  Potentiometers  |  Tested  |  Notes  |
 |:-----------|:------:|:--------:|:----------------:|:--------:|:--------|
 |  MCP41010  |   10   |    39.2  |        1         |     N    |
 |  MCP41050  |   50   |    19.6  |        1         |     N    |
@@ -44,7 +45,7 @@ Alt-234 = Ω
 #### 0.2.0 Breaking change
 
 Version 0.2.0 introduced a breaking change to improve handling the SPI dependency.
-The user has to call **SPI.begin()** or equivalent before calling **AD.begin()**.
+The user has to call **SPI.begin()** or equivalent before calling **POT.begin()**.
 Optionally the user can provide parameters to the **SPI.begin(...)**
 
 
@@ -75,6 +76,7 @@ Base class.
 - **MCP_POT(uint8_t select, uint8_t reset, uint8_t shutdown, uint8_t dataOut, uint8_t clock)**
 
 The derived classes have same constructors with same parameters as the base class.
+
 - **MCP41010(...)** constructor 1 potentiometer, 10 KΩ
 - **MCP41050(...)** constructor 1 potentiometer, 50 KΩ
 - **MCP41100(...)** constructor 1 potentiometer, 100 KΩ
@@ -101,34 +103,38 @@ It can be used to adjust the value in an SI unit kind of way.
 It allows you to set the maximum resistance more exact.
 
 There are however some considerations to be aware of.
-- it is not known how linear the devices are exactly. 100% linearity is assumed.
-- a first measurement (42010) showed the two potentiometers are not 100% identical.
-  Measured 10.38 and 10.37 KOhm, so within accuracy but still.
-- values will be rounded, so **getValue()** will not reproduce the **setValue()** exactly.
+- The devices are linear within 1% says datasheet.
+- Measuring an MCP 42010, showed the two potentiometers are not 100% identical.
+  Measured 10.38 KΩ and 10.37 KΩ, so within accuracy, datasheet < 1%.
+- values in Ohm will be rounded, so **getValue()** might not reproduce the parameter
+of **setOhm()** or **setValue()** exactly.
 
 - **void setMaxOhm(uint32_t maxOhm)** typical 10000, 50000 or 100000. 
 - **uint32_t getMaxOhm()**
 - **void setOhm(uint8_t pm, uint32_t ohm)**
 - **uint32_t getOhm(uint8_t pm)**
 
+This interface might change into a UNIT based function, in which the unit is not Ohm.
+It might be any user defined unit e.g. be flow control, lumen or volume.
+
 (feedback is, as always, welcome)
 
 
 #### SPI
 
-The default SPI speed used is 8 MHz. Note this only works for HW SPI.
+The default SPI speed used is 1 MHz.
 
 - **void setSPIspeed(uint32_t speed)** sets HW SPI clock in **Hz**.
 - **uint32_t getSPIspeed()** gets current HW SPI speed in **Hz**.
-- **void setSWSPIdelay(uint16_t del = 0)** adjust SW SPI clock.
-- **uint16_t getSWSPIdelay()** get set value.
+- **void setSWSPIdelay(uint16_t del = 0)** adjust SW SPI clock pulse in **us**.
+- **uint16_t getSWSPIdelay()** get the current value.
 
 
 #### Miscellaneous
 
 - **uint8_t pmCount()** returns the number of potmeters.
-- **void powerOn()** set SHUTDOWN pin HIGH (device enabled).
-- **void powerOff()**  set SHUTDOWN pin LOW (device disabled).
+- **void powerOn()** set SHUTDOWN pin HIGH = device enabled.
+- **void powerOff()**  set SHUTDOWN pin LOW = device disabled.
 - **bool isPowerOn()** idem.
 
 
@@ -139,7 +145,7 @@ The default SPI speed used is 8 MHz. Note this only works for HW SPI.
 
 ## About SPI Speed
 
-SPI code is based upon my MCP_ADC library.
+The SPI code is based upon my MCP_ADC library.
 
 The default SPI speed is reduced to 1 MHz. 
 This is the value recommended in the datasheet for 2.7 Volt.
@@ -153,20 +159,21 @@ For hardware SPI the ESP32 uses the VSPI pins. (see ESP examples).
 
 The example **MCP_POT_performance.ino** measures the performance at different
 HW SPI speeds. In a test it showed the MCP42010 still worked at 8 MHz on an UNO.
-(use of speeds beyond datasheet is at your own risk).
+Note that the use of speeds beyond datasheet specification is at your own risk.
 
 
 ## Daisy Chaining
 
-Not supported yet. (need hardware)
+Not supported yet.
 
-The MCP42xxx series have a **dataout** pin which allows to daisy chain the devices.
+The MCP42xxx series have a **SO = Serial Out** pin which allows to daisy chain the devices.
+
 The devices must share the CS (select) signal, or at least all of them should have 
-been selected to forward the bytes that are sent.
+been selected to forward the bytes that are sent into the chain.
 When the CS signal goes HIGH, all devices will simultaneously change to the new values.
 
 Note however that per device at most one potmeter can be set in a daisy chain, 
-or both have the same value. (as far as I understand the datasheet on this point).
+or both at the same value. (as far as I understand the datasheet on this point).
 
 
 ## Future
@@ -174,14 +181,14 @@ or both have the same value. (as far as I understand the datasheet on this point
 #### Must
 
 - improve documentation
-- buy hardware and test
+- test
 
 #### Should
 
 - investigate and implement daisy chaining of MCP42xxx
 - free format wrapper (user can define units is more flex)
-  - setMaxUnit(float mu), setUnit(float unit) etc
-  - still rounding of course, but the user do not need to map any more
+  - **setMaxUnit(float mu)**, **setUnit(float unit)**, **getUnit()** etc.
+  - still rounding of course, but the user does not need to map any more
   - can be used for Ohm too.
 
 #### Could
