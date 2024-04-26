@@ -16,7 +16,7 @@ Arduino library for MCP41xxx and MCP42xxx SPI based digital potentiometers.
 
 ## Description
 
-**Experimental** to be tested on hardware.
+**Experimental**
 
 The MCP_POT library implements access to MCP digital potentiometers.
 These devices have 1 or 2 potentiometers, 10 KΩ, 50 KΩ and 100 KΩ and communicates over SPI.
